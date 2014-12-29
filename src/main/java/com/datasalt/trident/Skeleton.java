@@ -21,7 +21,7 @@ public class Skeleton {
 
 		TridentTopology topology = new TridentTopology();
 		topology.newStream("spout", spout).each(new Fields("id", "text", "actor", "location", "date"),
-		    null);
+		    new Utils.ActorFilter("dave"));
 
 
 		return topology.build();

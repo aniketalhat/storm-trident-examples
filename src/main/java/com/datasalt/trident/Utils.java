@@ -39,7 +39,29 @@ public class Utils {
 		}
 	}
 
+	//Filter for actors
+	public static class ActorFilter implements Filter {
+		String actor;
 
+		public ActorFilter(String actor) {
+			this.actor = actor;
+		}
+
+		@Override
+		public boolean isKeep(TridentTuple tridentTuple) {
+			return tridentTuple.getString(0).equals(actor);
+		}
+
+		@Override
+		public void prepare(Map map, TridentOperationContext tridentOperationContext) {
+
+		}
+
+		@Override
+		public void cleanup() {
+
+		}
+	}
 
 
 	/**
