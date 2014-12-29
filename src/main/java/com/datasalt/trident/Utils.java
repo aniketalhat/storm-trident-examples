@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import backtype.storm.tuple.Values;
+import storm.trident.operation.BaseFunction;
 import storm.trident.operation.Filter;
+import storm.trident.operation.TridentCollector;
 import storm.trident.operation.TridentOperationContext;
 import storm.trident.tuple.TridentTuple;
 
@@ -42,6 +45,7 @@ public class Utils {
 	//Filter for actors
 	public static class ActorFilter implements Filter {
 		String actor;
+		int partitionIndex;
 
 		public ActorFilter(String actor) {
 			this.actor = actor;
@@ -49,12 +53,16 @@ public class Utils {
 
 		@Override
 		public boolean isKeep(TridentTuple tridentTuple) {
-			return tridentTuple.getString(0).equals(actor);
+			boolean filter = tridentTuple.getString(0).equals(actor);
+			if(filter) {
+				System.err.println("I am partition " + partitionIndex + " actor "+ actor);
+			}
+			return filter;
 		}
 
 		@Override
 		public void prepare(Map map, TridentOperationContext tridentOperationContext) {
-
+			partitionIndex = tridentOperationContext.getPartitionIndex();
 		}
 
 		@Override
@@ -63,6 +71,15 @@ public class Utils {
 		}
 	}
 
+
+	//Function for uppercase
+	public static class UpperCaseFuntion extends BaseFunction{
+
+		@Override
+		public void execute(TridentTuple tridentTuple, TridentCollector tridentCollector) {
+			tridentCollector.emit(new Values(tridentTuple.getString(0).toUpperCase()));
+		}
+	}
 
 	/**
 	 * Given a hashmap with string keys and integer counts, returns the "top" map of it. "n" specifies the size of

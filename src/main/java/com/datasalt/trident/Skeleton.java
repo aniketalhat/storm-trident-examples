@@ -20,9 +20,13 @@ public class Skeleton {
 		FakeTweetsBatchSpout spout = new FakeTweetsBatchSpout();
 
 		TridentTopology topology = new TridentTopology();
-		topology.newStream("spout", spout).each(new Fields("id", "text", "actor", "location", "date"),
-		    new Utils.ActorFilter("dave"));
+		topology.newStream("spout", spout)
+				.parallelismHint(5)
+				.partitionBy(new Fields("actor"))
+				.each(new Fields("actor", "text"), new Utils.ActorFilter("dave"));
+				//.each(new Fields("text", "actor"), new Utils.UpperCaseFuntion(), new Fields("uppercase"))
 
+				//.each(new Fields("actor", "text"), new Utils.PrintFilter());
 
 		return topology.build();
 	}
