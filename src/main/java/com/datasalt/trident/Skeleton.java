@@ -21,12 +21,13 @@ public class Skeleton {
 
 		TridentTopology topology = new TridentTopology();
 		topology.newStream("spout", spout)
-				.parallelismHint(5)
-				.partitionBy(new Fields("actor"))
-				.each(new Fields("actor", "text"), new Utils.ActorFilter("dave"));
+				//.parallelismHint(5)
+				//.partitionBy(new Fields("actor"))
+				//.each(new Fields("actor", "text"), new Utils.ActorFilter("dave"));
 				//.each(new Fields("text", "actor"), new Utils.UpperCaseFuntion(), new Fields("uppercase"))
-
 				//.each(new Fields("actor", "text"), new Utils.PrintFilter());
+				.aggregate(new Fields("location"), new Utils.LocationAggregator(), new Fields("location-count"))
+				.each(new Fields("location-count"), new Utils.LocationCount());
 
 		return topology.build();
 	}

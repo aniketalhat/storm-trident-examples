@@ -9,10 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import backtype.storm.tuple.Values;
-import storm.trident.operation.BaseFunction;
-import storm.trident.operation.Filter;
-import storm.trident.operation.TridentCollector;
-import storm.trident.operation.TridentOperationContext;
+import org.apache.commons.collections.MapUtils;
+import storm.trident.operation.*;
 import storm.trident.tuple.TridentTuple;
 
 /**
@@ -72,6 +70,26 @@ public class Utils {
 	}
 
 
+	//Filter for location
+	public static class LocationCount implements Filter{
+
+		@Override
+		public boolean isKeep(TridentTuple tridentTuple) {
+			System.err.println(tridentTuple.getString(0));
+			return true;
+		}
+
+		@Override
+		public void prepare(Map map, TridentOperationContext tridentOperationContext) {
+
+		}
+
+		@Override
+		public void cleanup() {
+
+		}
+	}
+
 	//Function for uppercase
 	public static class UpperCaseFuntion extends BaseFunction{
 
@@ -80,6 +98,29 @@ public class Utils {
 			tridentCollector.emit(new Values(tridentTuple.getString(0).toUpperCase()));
 		}
 	}
+
+
+	//Aggregator
+	public static class LocationAggregator extends BaseAggregator<Map <String, Integer>>{
+
+		@Override
+		public Map<String, Integer> init(Object o, TridentCollector tridentCollector) {
+			return new HashMap<String, Integer>();
+		}
+
+		@Override
+		public void aggregate(Map<String, Integer> stringIntegerMap, TridentTuple tridentTuple, TridentCollector tridentCollector) {
+			String location = tridentTuple.getString(0);
+			stringIntegerMap.put(location, MapUtils.getInteger(stringIntegerMap, location, 0) + 1);
+		}
+
+		@Override
+		public void complete(Map<String, Integer> stringIntegerMap, TridentCollector tridentCollector) {
+			tridentCollector.emit(new Values(stringIntegerMap));
+		}
+	}
+
+
 
 	/**
 	 * Given a hashmap with string keys and integer counts, returns the "top" map of it. "n" specifies the size of
