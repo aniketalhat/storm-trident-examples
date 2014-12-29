@@ -58,9 +58,7 @@
 		<dependency>
 			<groupId>storm</groupId>
 			<artifactId>storm</artifactId>
-			<version>0.8.2</version>
-			<!-- keep storm out of the jar-with-dependencies -->
-			<scope>provided</scope>
+			<version>0.9.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.twitter4j</groupId>

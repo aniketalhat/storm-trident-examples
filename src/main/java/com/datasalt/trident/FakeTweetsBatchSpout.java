@@ -56,8 +56,8 @@ public class FakeTweetsBatchSpout implements IBatchSpout {
 		this.randomGenerator = new Random();
 		// read a resource with 500 sample english sentences
 		try {
-			sentences = (String[]) IOUtils.readLines(
-			    ClassLoader.getSystemClassLoader().getResourceAsStream("500_sentences_en.txt")).toArray(new String[0]);
+			sentences = (String[]) IOUtils.readLines(FakeTweetsBatchSpout.class.getClassLoader().getResourceAsStream("500_sentences_en.txt")).toArray(new String[0]);
+			   // ClassLoader.getSystemClassLoader().getResourceAsStream("500_sentences_en.txt")).toArray(new String[0]);
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}

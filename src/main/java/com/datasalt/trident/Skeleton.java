@@ -21,16 +21,17 @@ public class Skeleton {
 
 		TridentTopology topology = new TridentTopology();
 		topology.newStream("spout", spout).each(new Fields("id", "text", "actor", "location", "date"),
-		    new Utils.PrintFilter());
+		    null);
+
 
 		return topology.build();
 	}
 
 	public static void main(String[] args) throws Exception {
 		Config conf = new Config();
-
 		LocalDRPC drpc = new LocalDRPC();
 		LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology("hackaton", conf, buildTopology(drpc));
+
 	}
 }
