@@ -75,7 +75,7 @@ public class Utils {
 
 		@Override
 		public boolean isKeep(TridentTuple tridentTuple) {
-			System.err.println(tridentTuple.getString(0));
+			System.err.println(tridentTuple.get(0).toString());
 			return true;
 		}
 
