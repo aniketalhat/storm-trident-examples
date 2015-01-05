@@ -17,16 +17,15 @@ import backtype.storm.tuple.Fields;
 public class Skeleton {
 
 	public static StormTopology buildTopology(LocalDRPC drpc) throws IOException {
-		FakeTweetsBatchSpout spout = new FakeTweetsBatchSpout();
+		FakeTweetsBatchSpout spout = new FakeTweetsBatchSpout(100);
 
 		TridentTopology topology = new TridentTopology();
 		topology.newStream("spout", spout)
-				//.parallelismHint(5)
-				//.partitionBy(new Fields("actor"))
+				.partitionBy(new Fields("location"))
 				//.each(new Fields("actor", "text"), new Utils.ActorFilter("dave"));
 				//.each(new Fields("text", "actor"), new Utils.UpperCaseFuntion(), new Fields("uppercase"))
 				//.each(new Fields("actor", "text"), new Utils.PrintFilter());
-				.aggregate(new Fields("location"), new Utils.LocationAggregator(), new Fields("location-count"))
+				.partitionAggregate(new Fields("location"), new Utils.LocationAggregator(), new Fields("location-count"))
 				.each(new Fields("location-count"), new Utils.LocationCount());
 
 		return topology.build();
